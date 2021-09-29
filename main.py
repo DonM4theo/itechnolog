@@ -10,4 +10,10 @@ def index():
 def about():
     return {'data': 'about page'}
 
-    
+@app.get('/home')
+def home():
+    return {'data': 'Testowa podstrona'}
+
+@app.post('/add')
+def add():
+    return None
