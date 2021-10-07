@@ -32,7 +32,7 @@ class Log(AppBase):
     action_data = Column(DateTime)
 
 class Program(ServerBase):
-    __tablename__ = "dbo.programy"
+    __tablename__ = "programy"
     idPRM = Column(Integer, primary_key=True, index=True)
     NrPRM = Column(SmallInteger)
     NazwaProgramu = Column(VARCHAR(50))
