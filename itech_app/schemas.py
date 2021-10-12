@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy.sql.sqltypes import VARCHAR, SmallInteger
+from sqlalchemy.sql.sqltypes import SmallInteger, DateTime
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
@@ -20,30 +18,42 @@ class User(BaseModel):
 
 class Log(BaseModel):
     sql_query: str
-    action_data: datetime 
+    action_data: DateTime 
+    class Config:
+        arbitrary_types_allowed = True
 
 class Program(BaseModel):
     NrPRM: SmallInteger
-    NazwaProgramu: VARCHAR(50)
-    KodProgramu: VARCHAR(15)
+    NazwaProgramu: str #VARCHAR(50)
+    KodProgramu: str #VARCHAR(15)
     CzyProgPrior: bool
     CzyNiepWsad: bool
     CzyUltraM05: bool
     CzyPolewaczka: bool
-    KtlPMC: SmallInteger
-    SzerTraw: SmallInteger
-    Pow: SmallInteger
-    CzyOdmuch: SmallInteger
-    KtlNapPW: SmallInteger
-    KtlCzasNN: SmallInteger
-    KtlPRK: SmallInteger
-    KtlCzasWygrz: SmallInteger
-    FsfCzasSusz: SmallInteger
-    Gmp: SmallInteger
-    CzyMask: SmallInteger
-    ProPMZad: SmallInteger
-    ProKolor: VARCHAR(50)
+    KtlPMC: int #SmallInteger
+    SzerTraw: int #SmallInteger
+    Pow: int #SmallInteger
+    CzyOdmuch: int #SmallInteger
+    KtlNapPW: int #SmallInteger
+    KtlCzasNN: int #SmallInteger
+    KtlPRK: int #SmallInteger
+    KtlCzasWygrz: int #SmallInteger
+    FsfCzasSusz: int #SmallInteger
+    Gmp: int #SmallInteger
+    CzyMask: int #SmallInteger
+    ProPMZad: int #SmallInteger
+    ProKolor: str #VARCHAR(50)
     ProCzyOtrzep: bool
-    ProCzasWygrz: SmallInteger
-    StRozZad: SmallInteger
+    ProCzasWygrz: int #SmallInteger
+    StRozZad: int #SmallInteger
     CzyAktywny: bool
+    class Config:
+        arbitrary_types_allowed = True
+        orm_mode =True
+
+class Show_program(BaseModel):
+    NrPRM: int #SmallInteger
+    NazwaProgramu: str #VARCHAR(50)
+    class Config:
+        arbitrary_types_allowed = True
+        orm_mode =True

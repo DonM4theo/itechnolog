@@ -3,7 +3,6 @@ from sqlalchemy.sql.sqltypes import DATETIME, VARCHAR, DateTime, SmallInteger
 from DB_App import AppBase
 from DB_Server import ServerBase
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 class User(AppBase):
     __tablename__ = "users"
@@ -21,7 +20,6 @@ class User(AppBase):
     can_create = Column(Boolean)
     is_admin = Column(Boolean)
     notification = Column(Boolean)
-    # logs = relationship("Log", back_populates="modifier")
 
 class Log(AppBase):
     __tablename__ = "logs"
