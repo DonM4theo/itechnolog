@@ -1,7 +1,7 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy.sql.functions import now
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import DATETIME, TIMESTAMP, Date, SmallInteger, DateTime, Time
+from sqlalchemy.sql.sqltypes import SmallInteger
 from sqlalchemy.sql.functions import now
 from pydantic import BaseModel, EmailStr
 
@@ -21,7 +21,7 @@ class User(BaseModel):
 
 class Log(BaseModel):
     sql_query: str
-    dt:datetime = None
+    dt:datetime = now
     user_id: int 
     class Config:
         arbitrary_types_allowed = True

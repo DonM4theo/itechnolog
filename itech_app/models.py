@@ -10,6 +10,15 @@ class User(AppBase):
     login = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     first_name = Column(String)
+    last_name = Column(String)
+    email = Column(String)
+    phone_number = Column(String)
+    is_active = Column(Boolean)
+    can_edit = Column(Boolean)
+    can_remove = Column(Boolean)
+    can_create = Column(Boolean)
+    is_admin = Column(Boolean)
+    notification = Column(Boolean)
     logs = relationship("Log", back_populates="modifier")
 
 class Log(AppBase):
