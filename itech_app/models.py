@@ -1,33 +1,25 @@
-from datetime import datetime
-from sqlalchemy.sql.sqltypes import DATETIME, VARCHAR, DateTime, SmallInteger
+from sqlalchemy.sql.sqltypes import DATETIME, VARCHAR, SmallInteger
 from DB_App import AppBase
 from DB_Server import ServerBase
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import defaultload, relationship
 
 class User(AppBase):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
     login = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     first_name = Column(String)
-    last_name = Column(String)
-    email = Column(String)
-    phone_number = Column(String)
-    is_active = Column(Boolean)
-    can_edit = Column(Boolean)
-    can_remove = Column(Boolean)
-    can_create = Column(Boolean)
-    is_admin = Column(Boolean)
-    notification = Column(Boolean)
+    logs = relationship("Log", back_populates="modifier")
 
 class Log(AppBase):
     __tablename__ = "logs"
-
     id = Column(Integer, primary_key=True, index=True)
-    # modifier = relationship("User", back_populates="logs")
     sql_query = Column(String)
-    action_data = Column(DateTime)
+    dt = Column(DATETIME)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    modifier = relationship("User", back_populates="logs")
 
 class Program(ServerBase):
     __tablename__ = "programy"

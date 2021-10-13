@@ -1,6 +1,9 @@
-from sqlalchemy.sql.sqltypes import SmallInteger, DateTime
+from datetime import datetime, timezone
+from sqlalchemy.sql.functions import now
+from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.sql.sqltypes import DATETIME, TIMESTAMP, Date, SmallInteger, DateTime, Time
+from sqlalchemy.sql.functions import now
 from pydantic import BaseModel, EmailStr
-from typing import Optional
 
 class User(BaseModel):
     login: str
@@ -18,7 +21,8 @@ class User(BaseModel):
 
 class Log(BaseModel):
     sql_query: str
-    action_data: DateTime 
+    dt:datetime = None
+    user_id: int 
     class Config:
         arbitrary_types_allowed = True
 
@@ -30,30 +34,30 @@ class Program(BaseModel):
     CzyNiepWsad: bool
     CzyUltraM05: bool
     CzyPolewaczka: bool
-    KtlPMC: int #SmallInteger
-    SzerTraw: int #SmallInteger
-    Pow: int #SmallInteger
-    CzyOdmuch: int #SmallInteger
-    KtlNapPW: int #SmallInteger
-    KtlCzasNN: int #SmallInteger
-    KtlPRK: int #SmallInteger
-    KtlCzasWygrz: int #SmallInteger
-    FsfCzasSusz: int #SmallInteger
-    Gmp: int #SmallInteger
-    CzyMask: int #SmallInteger
-    ProPMZad: int #SmallInteger
+    KtlPMC: SmallInteger
+    SzerTraw: SmallInteger
+    Pow: SmallInteger
+    CzyOdmuch: SmallInteger
+    KtlNapPW: SmallInteger
+    KtlCzasNN: SmallInteger
+    KtlPRK: SmallInteger
+    KtlCzasWygrz: SmallInteger
+    FsfCzasSusz: SmallInteger
+    Gmp: SmallInteger
+    CzyMask: SmallInteger
+    ProPMZad: SmallInteger
     ProKolor: str #VARCHAR(50)
     ProCzyOtrzep: bool
-    ProCzasWygrz: int #SmallInteger
-    StRozZad: int #SmallInteger
+    ProCzasWygrz: SmallInteger
+    StRozZad: SmallInteger
     CzyAktywny: bool
     class Config:
         arbitrary_types_allowed = True
         orm_mode =True
 
-class Show_program(BaseModel):
-    NrPRM: int #SmallInteger
-    NazwaProgramu: str #VARCHAR(50)
-    class Config:
-        arbitrary_types_allowed = True
-        orm_mode =True
+# class Show_program(BaseModel):
+#     NrPRM: int
+#     NazwaProgramu: str #VARCHAR(50)
+#     class Config:
+#         arbitrary_types_allowed = True
+#         orm_mode =True
