@@ -27,7 +27,7 @@ class Log(AppBase):
     __tablename__ = "logs"
     id = Column(Integer, primary_key=True, index=True)
     sql_query = Column(String)
-    dt = Column(DateTime(timezone=True), default=datetime.now())
+    dt = Column(DATETIME)
     user_id = Column(Integer, ForeignKey("users.id"))
 
     modifier = relationship("User", back_populates="logs")

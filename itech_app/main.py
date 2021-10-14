@@ -52,7 +52,7 @@ def show_registered(db: Session = Depends(get_db_conn_App)):
 
 @app.post('/logs', tags=["users"])
 def create_log(request: schemas.Log, db: Session = Depends(get_db_conn_App)):
-    new_log = models.Log(sql_query=request.sql_query, user_id=request.user_id)
+    new_log = models.Log(sql_query=request.sql_query, dt=datetime.now(), user_id=request.user_id)
     db.add(new_log)
     db.commit()
     db.refresh(new_log)
