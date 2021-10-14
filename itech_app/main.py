@@ -58,6 +58,13 @@ def create_log(request: schemas.Log, db: Session = Depends(get_db_conn_App)):
     db.refresh(new_log)
     return new_log
 
+@app.get('/logs/{user_id}', status_code=200, tags=["users"])
+def list_user_changes(user_id:int, db: Session = Depends(get_db_conn_App)):
+    logs = db.query(models.Log.id, models.Log.sql_query, models.User.login, models.Log.dt).filter((models.Log.user_id == user_id)).join(models.User).all()
+    if not logs:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Użytkownik o podanym id:{user_id}, nie istnieje. Lub użytkownik nie posiada, żadnej historii wprowadzanych zmian.")
+    return logs
 #######################################################################################################################
 #######################################################################################################################
 #DB_Server#############################################################################################################

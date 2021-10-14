@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DATETIME, DateTime, SmallInteger
 from pydantic import BaseModel, EmailStr
@@ -22,6 +23,7 @@ class Log(BaseModel):
     user_id: int 
     class Config:
         arbitrary_types_allowed = True
+        orm_mode =True
 
 class Program(BaseModel):
     NrPRM: SmallInteger
