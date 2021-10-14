@@ -1,8 +1,10 @@
-from sqlalchemy.sql.sqltypes import DATETIME, VARCHAR, SmallInteger
+from datetime import datetime
+from sqlalchemy.sql.sqltypes import DATETIME, VARCHAR, SmallInteger, DateTime
 from DB_App import AppBase
 from DB_Server import ServerBase
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import defaultload, relationship
+
 
 class User(AppBase):
     __tablename__ = "users"
@@ -25,7 +27,7 @@ class Log(AppBase):
     __tablename__ = "logs"
     id = Column(Integer, primary_key=True, index=True)
     sql_query = Column(String)
-    dt = Column(DATETIME)
+    dt = Column(DateTime(timezone=True), default=datetime.now())
     user_id = Column(Integer, ForeignKey("users.id"))
 
     modifier = relationship("User", back_populates="logs")
