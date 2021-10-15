@@ -1,3 +1,4 @@
+from sqlalchemy.sql.functions import mode
 from fastapi import FastAPI, Depends, HTTPException, status
 import schemas, models
 from hashing import Hash
@@ -5,7 +6,7 @@ from DB_App import Appengine, AppSessionLocal
 from DB_Server import Serverengine, ServerSessionLocal
 from sqlalchemy.orm import Session
 from datetime import datetime
-from sqlalchemy import exc
+from sqlalchemy import exc, sql
 
 app = FastAPI()
 
@@ -36,10 +37,10 @@ def index():
 @app.post('/register', status_code=status.HTTP_201_CREATED, tags=["users"])
 def register(request: schemas.User, db: Session = Depends(get_db_conn_App)):
     new_user = models.User(login=request.login, hashed_password=Hash.bcrypt(request.hashed_password),
-    first_name=request.first_name, last_name=request.last_name, email=request.email,
-    phone_number=request.phone_number, is_active=request.is_active, can_edit=request.can_edit,
-    can_remove=request.can_remove, can_create=request.can_create, is_admin=request.is_admin,
-    notification=request.notification)
+            first_name=request.first_name, last_name=request.last_name, email=request.email,
+            phone_number=request.phone_number, is_active=request.is_active, can_edit=request.can_edit,
+            can_remove=request.can_remove, can_create=request.can_create, is_admin=request.is_admin,
+            notification=request.notification)
     
     try:
         db.add(new_user)
@@ -89,3 +90,19 @@ def get_program_by_NrPRM(NrPRM:int, db: Session = Depends(get_db_conn_Server)):
                             detail=f"Program o numerze programu malowania:{NrPRM}, nie istnieje.")
     return program
 
+@app.post('/programs', tags=["programs"])
+def create_program(request: schemas.Program, db: Session = Depends(get_db_conn_Server)):
+    new_program = models.Program(NrPRM=request.NrPRM, NazwaProgramu=request.NazwaProgramu, CzyProgPrior=request.CzyProgPrior, CzyNiepWsad=request.CzyNiepWsad,
+                CzyUltraM05=request.CzyUltraM05, CzyPolewaczka=request.CzyPolewaczka, KtlPMC=request.KtlPMC, SzerTraw=request.SzerTraw, Pow=request.Pow,
+                CzyOdmuch=request.CzyOdmuch, KtlNapPW=request.KtlNapPW, KtlCzasNN=request.KtlCzasNN, KtlPRK=request.KtlPRK, KtlCzasWygrz=request.KtlCzasWygrz,
+                FsfCzasSusz=request.FsfCzasSusz, Gmp=request.Gmp, CzyMask=request.CzyMask, ProPMZad=request.ProPMZad, ProKolor=request.ProKolor,
+                ProCzyOtrzep=request.ProCzyOtrzep, ProCzasWygrz=request.ProCzasWygrz, StRozZad=request.StRozZad, CzyAktywny=request.CzyAktywny)
+    try:
+        db.add(new_program)
+        db.commit()
+        db.refresh(new_program)
+        return new_program
+    except exc.IntegrityError:
+        #db.rollback()
+        raise HTTPException(status_code=200,
+                            detail="Rekord nie został stworzyny.")

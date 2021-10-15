@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import DATETIME, DateTime, SmallInteger
 from pydantic import BaseModel, EmailStr
 
 class User(BaseModel):
@@ -26,29 +25,28 @@ class Log(BaseModel):
         orm_mode =True
 
 class Program(BaseModel):
-    NrPRM: SmallInteger
+    NrPRM: int
     NazwaProgramu: str #VARCHAR(50)
-    KodProgramu: str #VARCHAR(15)
     CzyProgPrior: bool
     CzyNiepWsad: bool
     CzyUltraM05: bool
     CzyPolewaczka: bool
-    KtlPMC: SmallInteger
-    SzerTraw: SmallInteger
-    Pow: SmallInteger
-    CzyOdmuch: SmallInteger
-    KtlNapPW: SmallInteger
-    KtlCzasNN: SmallInteger
-    KtlPRK: SmallInteger
-    KtlCzasWygrz: SmallInteger
-    FsfCzasSusz: SmallInteger
-    Gmp: SmallInteger
-    CzyMask: SmallInteger
-    ProPMZad: SmallInteger
+    KtlPMC: int
+    SzerTraw: int
+    Pow: int
+    CzyOdmuch: int
+    KtlNapPW: int
+    KtlCzasNN: int
+    KtlPRK: int
+    KtlCzasWygrz: int
+    FsfCzasSusz: int
+    Gmp: int
+    CzyMask: int
+    ProPMZad: int
     ProKolor: str #VARCHAR(50)
     ProCzyOtrzep: bool
-    ProCzasWygrz: SmallInteger
-    StRozZad: SmallInteger
+    ProCzasWygrz: int
+    StRozZad: int
     CzyAktywny: bool
     class Config:
         arbitrary_types_allowed = True
