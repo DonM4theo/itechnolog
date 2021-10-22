@@ -1,12 +1,13 @@
 from sqlalchemy.sql.functions import mode
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Response
 import schemas, models
 from hashing import Hash
 from DB_App import Appengine, AppSessionLocal
-from DB_Server import Serverengine, ServerSessionLocal
+from DB_Server import Serverengine, ServerSessionLocal, db_URL
 from sqlalchemy.orm import Session
 from datetime import datetime
-from sqlalchemy import exc, sql
+from sqlalchemy import exc
+import pyodbc
 
 app = FastAPI()
 
@@ -91,18 +92,77 @@ def get_program_by_NrPRM(NrPRM:int, db: Session = Depends(get_db_conn_Server)):
     return program
 
 @app.post('/programs', tags=["programs"])
-def create_program(request: schemas.Program, db: Session = Depends(get_db_conn_Server)):
-    new_program = models.Program(NrPRM=request.NrPRM, NazwaProgramu=request.NazwaProgramu, CzyProgPrior=request.CzyProgPrior, CzyNiepWsad=request.CzyNiepWsad,
-                CzyUltraM05=request.CzyUltraM05, CzyPolewaczka=request.CzyPolewaczka, KtlPMC=request.KtlPMC, SzerTraw=request.SzerTraw, Pow=request.Pow,
-                CzyOdmuch=request.CzyOdmuch, KtlNapPW=request.KtlNapPW, KtlCzasNN=request.KtlCzasNN, KtlPRK=request.KtlPRK, KtlCzasWygrz=request.KtlCzasWygrz,
-                FsfCzasSusz=request.FsfCzasSusz, Gmp=request.Gmp, CzyMask=request.CzyMask, ProPMZad=request.ProPMZad, ProKolor=request.ProKolor,
-                ProCzyOtrzep=request.ProCzyOtrzep, ProCzasWygrz=request.ProCzasWygrz, StRozZad=request.StRozZad, CzyAktywny=request.CzyAktywny)
+def create_program(request: schemas.Program):
+    
     try:
-        db.add(new_program)
-        db.commit()
-        db.refresh(new_program)
-        return new_program
+        conn = pyodbc.connect(db_URL)
+        print("Connected")
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO [dbo].[programy](
+        [NrPRM], [NazwaProgramu], [CzyProgPrior], [CzyNiepWsad], [CzyUltraM05], [CzyPolewaczka], [KtlPMC],
+        [SzerTraw], [Pow], [CzyOdmuch], [KtlNapPW], [KtlCzasNN], [KtlPRK], [KtlCzasWygrz], [FsfCzasSusz], 
+        [Gmp], [CzyMask], [ProPMZad], [ProKolor], [ProCzyOtrzep], [ProCzasWygrz], [StRozZad], [CzyAktywny])
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+          
+        request.NrPRM,request.NazwaProgramu,request.CzyProgPrior,request.CzyNiepWsad,request.CzyUltraM05,request.CzyPolewaczka,request.KtlPMC,
+        request.SzerTraw,request.Pow,request.CzyOdmuch,request.KtlNapPW,request.KtlCzasNN,request.KtlPRK,request.KtlCzasWygrz,request.FsfCzasSusz,
+        request.Gmp,request.CzyMask,request.ProPMZad,request.ProKolor,request.ProCzyOtrzep,request.ProCzasWygrz,request.StRozZad,request.CzyAktywny)
+
+        conn.commit()   
+        conn.close()
+
+        return("Insert completed")
+    
     except exc.IntegrityError:
-        #db.rollback()
+        conn.close()
         raise HTTPException(status_code=200,
-                            detail="Rekord nie został stworzyny.")
+                            detail="Rekord nie został stworzyny. Błąd wprowadzonych danych")
+    except:
+        conn.close()
+        return("Błąd połączenia lub wykonania zapytania SQL")
+
+@app.delete('/programs/{idPRM}', tags=["programs"])
+def destroy(idPRM:int, status_code=204, db: Session = Depends(get_db_conn_Server)):
+    
+    db.query(models.Program).filter(models.Program.idPRM == idPRM).delete(synchronize_session=False)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    
+
+
+
+
+# @app.get('/prog', tags=["programs"])
+# def read():
+    
+#     try:
+#         conn = pyodbc.connect(db_URL)
+#         print("Read")
+#         cursor = conn.cursor()
+#         cursor.execute("select * from dbo.programy")
+#         for row in cursor:
+#             a = print(f'row = {row}')
+#         conn.close()
+#         return(a)
+#     except:
+#         return(print("Nieudane połączenie"))
+
+
+# @app.post('/programs', tags=["programs"])
+# def create_program(request: schemas.Program, db: Session = Depends(get_db_conn_Server)):
+#     new_program = models.Program(NrPRM=request.NrPRM, NazwaProgramu=request.NazwaProgramu, CzyProgPrior=request.CzyProgPrior, CzyNiepWsad=request.CzyNiepWsad,
+#                 CzyUltraM05=request.CzyUltraM05, CzyPolewaczka=request.CzyPolewaczka, KtlPMC=request.KtlPMC, SzerTraw=request.SzerTraw, Pow=request.Pow,
+#                 CzyOdmuch=request.CzyOdmuch, KtlNapPW=request.KtlNapPW, KtlCzasNN=request.KtlCzasNN, KtlPRK=request.KtlPRK, KtlCzasWygrz=request.KtlCzasWygrz,
+#                 FsfCzasSusz=request.FsfCzasSusz, Gmp=request.Gmp, CzyMask=request.CzyMask, ProPMZad=request.ProPMZad, ProKolor=request.ProKolor,
+#                 ProCzyOtrzep=request.ProCzyOtrzep, ProCzasWygrz=request.ProCzasWygrz, StRozZad=request.StRozZad, CzyAktywny=request.CzyAktywny)
+#     try:
+#         db.add(new_program)
+#         db.commit()
+#         db.refresh(new_program)
+#         return new_program
+#     except exc.IntegrityError:
+#         #db.rollback()
+#         raise HTTPException(status_code=200,
+#                             detail="Rekord nie został stworzyny.")
+                           

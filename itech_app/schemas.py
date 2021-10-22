@@ -1,6 +1,9 @@
 from datetime import datetime
 from typing import List
+from sqlalchemy.sql.elements import Null
+from sqlalchemy.sql.expression import false, null
 from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.sql.sqltypes import NULLTYPE, NullType
 from pydantic import BaseModel, EmailStr
 
 class User(BaseModel):
@@ -27,34 +30,27 @@ class Log(BaseModel):
 class Program(BaseModel):
     NrPRM: int
     NazwaProgramu: str #VARCHAR(50)
-    CzyProgPrior: bool
-    CzyNiepWsad: bool
-    CzyUltraM05: bool
-    CzyPolewaczka: bool
-    KtlPMC: int
-    SzerTraw: int
+    CzyProgPrior: bool = False
+    CzyNiepWsad: bool = False
+    CzyUltraM05: bool = False
+    CzyPolewaczka: bool = False
+    KtlPMC: int = 1
+    SzerTraw: int = 600
     Pow: int
-    CzyOdmuch: int
+    CzyOdmuch: int = 0
     KtlNapPW: int
-    KtlCzasNN: int
+    KtlCzasNN: int = 30
     KtlPRK: int
-    KtlCzasWygrz: int
-    FsfCzasSusz: int
-    Gmp: int
-    CzyMask: int
-    ProPMZad: int
-    ProKolor: str #VARCHAR(50)
-    ProCzyOtrzep: bool
-    ProCzasWygrz: int
-    StRozZad: int
-    CzyAktywny: bool
+    KtlCzasWygrz: int = 30
+    FsfCzasSusz: int #= Null
+    Gmp: int #= Null
+    CzyMask: int #= Null
+    ProPMZad: int #= Null
+    ProKolor: str #= Null #VARCHAR(50)
+    ProCzyOtrzep: bool = False
+    ProCzasWygrz: int #= Null
+    StRozZad: int = 1
+    CzyAktywny: bool = True
     class Config:
         arbitrary_types_allowed = True
         orm_mode =True
-
-# class Show_program(BaseModel):
-#     NrPRM: int
-#     NazwaProgramu: str #VARCHAR(50)
-#     class Config:
-#         arbitrary_types_allowed = True
-#         orm_mode =True
