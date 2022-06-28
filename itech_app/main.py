@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from sqlalchemy import exc
 import pyodbc
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -74,6 +75,23 @@ def list_user_changes(user_id:int, db: Session = Depends(get_db_conn_App)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Użytkownik o podanym id:{user_id}, nie istnieje. Lub użytkownik nie posiada, żadnej historii wprowadzanych zmian.")
     return logs
+
+@app.put('/register/{user_id}', status_code=status.HTTP_202_ACCEPTED,  tags=["users"])
+def update(user_id:int, request: schemas.User, db: Session = Depends(get_db_conn_App)):
+    user = db.query(models.User).filter(models.User.id == user_id)
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Program o id: {user_id}, nie istnieje")
+    user.update(request.dict())
+    db.commit()
+    return 'record updated'
+
+@app.delete('/register/{user_id}', tags=["users"])
+def destroy(user_id:int, db: Session = Depends(get_db_conn_App)):
+    
+    db.query(models.User).filter(models.User.id == user_id).delete(synchronize_session=False)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 #######################################################################################################################
 #######################################################################################################################
 #DB_Server#############################################################################################################
@@ -81,7 +99,44 @@ def list_user_changes(user_id:int, db: Session = Depends(get_db_conn_App)):
 @app.get('/programs', tags=["programs"])
 def get_programs(db: Session = Depends(get_db_conn_Server)):
     programs = db.query(models.Program).all()
-    return programs
+    html_content = """    
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>View04</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <style>
+                body {
+                    height: 100%;
+                    padding: 0;
+                    margin: 0;
+                }
+
+                div {
+                    position:fixed;
+                    width: 50%;
+                    height: 100%;
+                }
+
+                #NW { top:0;   left:0;   background:rgba(22, 1, 211, 0.904)}
+                #NE { top:0;   left:50%; background:rgb(73, 144, 202)}
+                #SW { top:50%; left:0;   background:rgba(6, 88, 6, 0.836)}
+                #SE { top:50%; left:50%; background:rgb(4, 190, 29) }
+            </style>
+        </head>
+        <body>
+            <div id="NW"></div>
+            <div id="NE"></div>
+        
+        <script>
+
+        </script>
+        </body>
+        </html>
+        """
+    return HTMLResponse(content=html_content, status_code=200)
 
 @app.get('/programs/{NrPRM}', tags=["programs"])
 def get_program_by_NrPRM(NrPRM:int, db: Session = Depends(get_db_conn_Server)):
@@ -117,12 +172,18 @@ def create_program(request: schemas.Program):
         conn.close()
         raise HTTPException(status_code=200,
                             detail="Rekord nie został stworzyny. Błąd wprowadzonych danych")
-    except:
-        conn.close()
-        return("Błąd połączenia lub wykonania zapytania SQL")
+        
+@app.put('/programs/{idPRM}', status_code=status.HTTP_202_ACCEPTED,  tags=["programs"])
+def update(idPRM:int, request: schemas.Program, db: Session = Depends(get_db_conn_Server)):
+    program = db.query(models.Program).filter(models.Program.idPRM == idPRM)
+    if not program.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Program o id: {idPRM}, nie istnieje")
+    program.update(request.dict())
+    db.commit()
+    return 'record updated'
 
 @app.delete('/programs/{idPRM}', tags=["programs"])
-def destroy(idPRM:int, status_code=204, db: Session = Depends(get_db_conn_Server)):
+def destroy(idPRM:int, db: Session = Depends(get_db_conn_Server)):
     
     db.query(models.Program).filter(models.Program.idPRM == idPRM).delete(synchronize_session=False)
     db.commit()

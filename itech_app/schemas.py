@@ -1,9 +1,5 @@
-from datetime import datetime
-from typing import List
+from typing import Optional
 from sqlalchemy.sql.elements import Null
-from sqlalchemy.sql.expression import false, null
-from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import NULLTYPE, NullType
 from pydantic import BaseModel, EmailStr
 
 class User(BaseModel):
@@ -42,13 +38,13 @@ class Program(BaseModel):
     KtlCzasNN: int = 30
     KtlPRK: int
     KtlCzasWygrz: int = 30
-    FsfCzasSusz: int #= Null
-    Gmp: int #= Null
-    CzyMask: int #= Null
-    ProPMZad: int #= Null
-    ProKolor: str #= Null #VARCHAR(50)
-    ProCzyOtrzep: bool = False
-    ProCzasWygrz: int #= Null
+    FsfCzasSusz: Optional[int] = None#= Null
+    Gmp: Optional[int] = None #= Null
+    CzyMask: Optional[int] = None #= Null
+    ProPMZad: Optional[int] = None #= Null
+    ProKolor: Optional[int] = None #= Null #VARCHAR(50)
+    ProCzyOtrzep: Optional[bool] = None
+    ProCzasWygrz: Optional[int] = None #= Null
     StRozZad: int = 1
     CzyAktywny: bool = True
     class Config:

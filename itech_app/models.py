@@ -60,3 +60,4 @@ class Program(ServerBase):
     StRozZad = Column(SmallInteger)
     CzyAktywny = Column(Boolean)
     # DataMod = Column(DATETIME)
+
